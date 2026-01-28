@@ -13,7 +13,10 @@ int main()
     for(auto num : codeList)
     {
         std::string name = "goblin" + std::to_string(num);
-        monsterData.insert(std::make_pair(num, std::make_unique<MyMonster>(name)));
+        // 旧写法: 先创建pair对象再移动或拷贝到map
+        // monsterData.insert(std::make_pair(num, std::make_unique<MyMonster>(name)));
+        // 新写法: 直接在map的内存节点构造对象
+        monsterData.emplace(num, std::make_unique<MyMonster>(name));
     }
 
     // 寻找monster
