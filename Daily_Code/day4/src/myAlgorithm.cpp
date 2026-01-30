@@ -6,7 +6,7 @@
 int main()
 {
     // 创建编号列表
-    std::vector<int> codeList = {001, 002, 003, 004};
+    std::vector<int> codeList = {1, 2, 3, 4};
     // 创建map容器
     std::map<int, std::unique_ptr<Monster>> monsterData;
     // 创建monster并分配编号

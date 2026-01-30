@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 
+//** 将头文件.h与实现.cpp分离 **//
+
 class MyMonster{
 public:
     MyMonster() = delete;

@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 
+//** 如何使用虚函数实现动态多态 **//
+
 // 抽象基类
 class Monster
 {

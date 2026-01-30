@@ -1,6 +1,8 @@
 #pragma once
 #include <list>
 
+//** 一些关键词的使用 **//
+
 class MyClass{
 public:
     MyClass();
@@ -12,7 +14,7 @@ public:
     void coutList();
 
 private:
-void init();
+    void init();
 private:
     int m_num;
     std::list<int> m_list;

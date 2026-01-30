@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 
+//** 如何运用move语义 **//
+
 class Monster{
 public:
     Monster() = delete;

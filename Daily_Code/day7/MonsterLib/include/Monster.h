@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 
+//** 将class封装为动态库 **//
+
 // 抽象基类
 class Monster
 {

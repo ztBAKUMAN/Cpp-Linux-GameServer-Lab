@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-//** 自定义构造，深入理解move语义 **//
+//** 使用PImpl模式：净化头文件，封装数据，避免链式编译 **//
 
 // 抽象基类
 class Monster
@@ -11,9 +11,7 @@ class Monster
 public:
     // 指定构造函数必须带string参数
     Monster() = delete;
-    explicit Monster(std::string name) {
-        m_name = name;
-    }
+    explicit Monster(std::string name);
     // 虚析构保证子类调用析构
     virtual ~Monster();
 
@@ -30,22 +28,20 @@ public:
     // 纯虚函数强制子类实现
     virtual void attack() = 0;
     // 虚函数允许子类不用重写
-    virtual void beAttacked(int power) {
-        std::cout << m_name << "was asttacked" << std::endl;
-        m_hp -= power;
-        if(m_hp <= 0)
-        {
-            dead();
-        }
-    }
+    virtual void beAttacked(int power);
     virtual void dead() = 0;
 
 protected:
-    int m_hp{100};
-    std::string m_name;
-    std::unique_ptr<int> m_uptr;    // 独占指针
-    std::shared_ptr<int> m_sptr;    // 共享指针
-    int* m_leakPtr{nullptr};        // 裸指针
+    // Getter
+    std::string getName() const;
+    int getHp() const;
+    // Setter
+    void setName(const std::string& name);
+    void setHp(int hp);
+
+private:
+    struct Impl;                      // 前置声明Impl结构体, 用来存放私有数据
+    std::unique_ptr<Impl> m_pImpl;    // PImpl指针
 };
 
 class Goblin : public Monster

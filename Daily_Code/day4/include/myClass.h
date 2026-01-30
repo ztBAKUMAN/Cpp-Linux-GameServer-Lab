@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 
+//** 使用STL容器&算法 **//
+
 class Monster{
 public:
     Monster() = delete;

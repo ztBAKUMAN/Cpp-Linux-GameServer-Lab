@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 
+//** 关于智能指针的用法 **//
+
 class Monster{
 public:
     Monster() = delete;
