@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 project(Daily_Study)
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
@@ -21,3 +21,4 @@ add_compile_options(-Wall -Wextra)
 # add_subdirectory(day10_more_algorithm)
 # add_subdirectory(day11_file_IO)
 # add_subdirectory(day12_FileSystem)
+add_subdirectory(day13_JSON)
