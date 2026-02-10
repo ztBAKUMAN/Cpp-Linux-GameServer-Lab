@@ -5,6 +5,7 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <fstream>
 
 // 日志等级
 enum class LogLevel
@@ -14,6 +15,8 @@ enum class LogLevel
     EM_WARN,
     EM_ERROR
 };
+
+const std::string defaulFile = "server.log";
 
 class MyLogger
 {
@@ -25,7 +28,32 @@ public:
         return logger;
     };
 
-    ~MyLogger() = default;
+    ~MyLogger()
+    {
+        // 析构时关闭文件
+        if(m_logFile.is_open())
+        {
+            // 刷新缓冲, 确保最后日志写入
+            m_logFile.flush();
+            m_logFile.close();
+        }
+    }
+
+    // 打开文件
+    void open(const std::string& filename)
+    {
+        std::lock_guard<std::mutex> locker(m_mutex);
+        if(m_logFile.is_open())
+        {
+            m_logFile.close();
+        }
+        // 以追加模式打开
+        m_logFile.open(filename, std::ios::out | std::ios::app);
+        if(!m_logFile.is_open())
+        {
+            std::cerr << "Failed to open logFile: " << filename << std::endl;
+        }
+    }
 
     // **变参模板函数：支持任意数量任意类型
     template <typename... Args>
@@ -35,40 +63,63 @@ public:
 
         // 打印时间
         auto nowTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        std::cout << "[" << std::put_time(std::localtime(&nowTime), "%H:%M:%S") << "]";
+        std::stringstream ss;
+        ss << "[" << std::put_time(std::localtime(&nowTime), "%H:%M:%S") << "]";
+        std::string timeString = ss.str();
 
         // 打印日志等级，用不同颜色区分
         // \033[34m表示Linux终端控制符
+        const char* levelString = "";
+        const char* colorString = "";
         switch (level)
         {
         case LogLevel::EM_DEBUG:
-            std::cout << "\033[34m[DEBUG]\033[0m ";
+            levelString = "[DEBUG]"; colorString = "\033[34m";
             break; // 蓝色
         case LogLevel::EM_INFO:
-            std::cout << "\033[32m[INFO]\033[0m ";
+            levelString = "[INFO]"; colorString = "\033[32m";
             break; // 绿色
         case LogLevel::EM_WARN:
-            std::cout << "\033[33m[WARN]\033[0m ";
+            levelString = "[WARN]"; colorString = "\033[33m";
             break; // 黄色
         case LogLevel::EM_ERROR:
-            std::cout << "\033[31m[ERROR]\033[0m ";
+            levelString = "[ERROR]"; colorString = "\033[31m";
             break; // 红色
         default:
             break;
         }
-
+    
+        std::cout << timeString << " " << colorString << levelString << "\033[0m ";
         // 打印实际内容(递归打印剩余参数) C++17折叠表达式实现
         ((std::cout << args << " "), ...);
-
         // 打印文件和行号
         std::cout << " (" << filename << ":" << line << ")" << std::endl;
+
+        // 将日志写入文件
+        if(m_logFile.is_open())
+        {
+            m_logFile << timeString << " " << levelString << " ";
+            ((m_logFile << args << " "), ...);
+            m_logFile << " (" << filename << ":" << line << ")" << std::endl;
+
+            // *如果发生ERROR, 刷新缓冲区
+            if(level == LogLevel::EM_ERROR)
+            {
+                m_logFile.flush();
+            }
+        }
     }
 
 private:
-    MyLogger() = default;
+    MyLogger()
+    {
+        open(defaulFile);
+    }
     MyLogger(const MyLogger &obj) = delete;
     MyLogger &operator=(const MyLogger &obj) = delete;
+
     std::mutex m_mutex;
+    std::ofstream m_logFile;
 };
 
 // 预处理将 __FILE__ 和 __LINE__ 自动替换为文件名和行号
