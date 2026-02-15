@@ -9,4 +9,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # 开启编译警告
 add_compile_options(-Wall -Wextra)
 # 添加子目录cmake文件
-add_subdirectory(day18_ScopedTimer)
+add_subdirectory(day19_AsyncLog)
