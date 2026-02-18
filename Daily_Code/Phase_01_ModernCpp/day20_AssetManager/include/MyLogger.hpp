@@ -118,7 +118,11 @@ public:
 private:
     MyLogger() : m_exit(false)
     {
-        open(defaulFile);
+        if(m_filename.empty())
+        {
+            m_filename = defaulFile;
+        }
+        open(m_filename);
         m_workerThread = std::thread(&MyLogger::processTask, this);
     }
     MyLogger(std::string fileName) : m_filename(fileName), m_exit(false)
